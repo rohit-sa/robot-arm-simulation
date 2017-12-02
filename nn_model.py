@@ -12,17 +12,16 @@ from keras.layers import Dense
 from keras import optimizers
 
 from pathlib import Path
-import keras.backend as K
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
-def custom_loss(y_true,y_pred):
-    W = np.array([4,8,6,2])/20
-    return K.mean(K.square(y_pred - y_true)*W, axis=-1)
-
-def ann_test(X,y,prev_model=False):
+"""
+function " neural_net "
+Notes:creates Artificial neural network to fit to X
+returns the trained model. May re-train previous model
+"""
+def neural_net(X,y,prev_model=False):
     nn_name = Path('model.hd5')
     if prev_model & nn_name.exists():
         print('Using prev model')
@@ -47,18 +46,30 @@ def ann_test(X,y,prev_model=False):
     ax.plot(range(len(loss)),loss)
     plt.show()
     return nn_architecture
-
+"""
+function " transform "
+Notes: converts x,y,z positions to r, theta and phi
+coordiante system
+"""
 def transform(X):
     r = np.linalg.norm(X,axis=1)
     theta = (np.pi/2) - np.arccos(X[:,1]/r)
     phi = np.arctan2(X[:,2],X[:,0])
     return np.vstack((r,theta,phi)).T 
-
+"""
+function " proj_plane "
+Notes: defines xz as a single plane reducing dimensionality to 2
+removing one output angle
+"""
 def proj_plane(X):
     x,y,z = X[:,0], X[:,1], X[:,2]
     xz = np.sqrt(x*x + z*z)
     return np.vstack((xz,y)).T
-    
+"""
+function " main "
+Notes: load dataset, transform values
+train model and save
+"""   
 def main():
     data = pd.read_csv('dataset.csv')
     out_cols = [col for col in data.columns if 'angle' in col]
@@ -85,7 +96,7 @@ def main():
     y_test = y[test_index]
     
     
-    nn = ann_test(X_train,y_train,False)
+    nn = neural_net(X_train,y_train,False)
     nn.save('model.hd5')
     y_pred = nn.predict(X_test)
     

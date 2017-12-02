@@ -45,7 +45,15 @@ class Transmission(object):
         tm.sleep(0.1)
         return
     
+"""
+class " GUI "
+Notes: creates gui to control angles for limbs
+"""     
 class GUI(object):
+    """
+    function " __init__ "
+    Notes: uses model to intialize angles and limits and states
+    """ 
     def __init__(self,model):
         self.__angles = model['angles']
         self.__limits = model['limits']
@@ -53,13 +61,19 @@ class GUI(object):
         self.__b_id = []
         self.__claw = 0 #open
         self.__state = True #running
-    
+    """
+    function " s_callback "
+    Notes: callback function for sliders for angles
+    """     
     def s_callback(self,s):
         i = s.id
         u = self.__limits['u'][i]
         l = self.__limits['l'][i]
         self.__angles[i] = self.__s_id[i].value*(u-l) + l
-        
+    """
+    function " b_callback "
+    Notes: button callback function for clicking
+    """         
     def b_callback(self,b):
         if b.id == 0:
             if self.__state == True:
@@ -74,7 +88,10 @@ class GUI(object):
             else:
                 self.__b_id[1].text = '<b>Grab</b>'
                 self.__claw = 0
-            
+    """
+    function " build "
+    Notes: cerates the gui elements (sliders and button)
+    """             
     def build(self):
         self.__b_id.append(button(text='<b>Pause</b>',bind=self.b_callback, id=0))
         scene.append_to_caption('\t')
@@ -84,10 +101,16 @@ class GUI(object):
             caption = '\tJoint ' + str(i+1)
             self.__s_id.append( slider(length=250, bind = self.s_callback, id=i))
             scene.append_to_caption(caption + '\n\n')
-   
+    """
+    function " read_values "
+    Notes: get state of model angles and claw state
+    """    
     def read_values(self):
         return self.__angles, self.__claw
-
+    """
+    function " read_state "
+    Notes: get running state
+    """ 
     def read_state(self):
         return self.__state
     
