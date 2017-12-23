@@ -591,9 +591,6 @@ def vis(cam_enable=False,com_enable=False):
 """
 using nn model
 """
-def custom_loss(y_true,y_pred):
-    W = np.array([4,8,6,2])/20
-    return K.mean(K.square(y_pred - y_true)*W, axis=-1)
 
 def transform(X):
     r = np.linalg.norm(X)
@@ -608,17 +605,17 @@ def nn_prediction():
     create_scene(400)
     model = init_model()
     model.update({'reach':vector(0,0,0)})
-    nn = load_model('model.hd5',custom_objects={'custom_loss':custom_loss})
+    nn = load_model('model.hd5')
     target_gen = TargetGenerator(model,'circle')
     print(nn.summary())
     for i in range(1000):
         target = target_gen.get_target()        
 
         X = np.array([target.pos.x,target.pos.y,target.pos.z])
-        X = transform(X)
-        o = 0
-        X = np.append(X,-np.pi/10)
-        X.shape = (1,4)
+#        X = transform(X)
+#        o = 0
+#        X = np.append(X,-np.pi/10)
+        X.shape = (1,3)
         
         angles = np.degrees(nn.predict(X))
         
