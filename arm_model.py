@@ -18,6 +18,11 @@ import matplotlib.pyplot as plt
 Custom Classes
 """
 class Transmission(object):
+    """    
+    function:    def __init__    
+    input parameters: self,port='COM6'    
+    Notes:     
+    """    
     def __init__(self,port='COM6'):
         self.__outgoing_data = b''
         self.__connection = 0
@@ -27,6 +32,11 @@ class Transmission(object):
             print('Nothing on '+port)
         return
     
+    """    
+    function:    def __convert_angles    
+    input parameters: self,data    
+    Notes:     
+    """    
     def __convert_angles(self,data):
         out_angle = []
         out_angle.append(data[0]+90)
@@ -36,6 +46,11 @@ class Transmission(object):
         out_angle.append(data[4])
         return out_angle
     
+    """    
+    function:    def transmit    
+    input parameters: self,data    
+    Notes:     
+    """    
     def transmit(self,data):
         if self.__connection == 0:
             return
@@ -115,6 +130,11 @@ class GUI(object):
         return self.__state
     
 class Arm_segment(object):
+    """    
+    function:    def __init__    
+    input parameters: self, pos, length    
+    Notes:     
+    """    
     def __init__(self, pos, length):
         self.pos = pos
         self.l = length
@@ -147,6 +167,11 @@ class Arm_segment(object):
 Camera tracking
 """
 class Obj_tracking(object):
+    """    
+    function:    def __init__    
+    input parameters: self,model    
+    Notes:     
+    """    
     def __init__(self,model):
         self.__total_l = sum(model['lengths'])
         self.__cap = cv2.VideoCapture(0)
@@ -160,6 +185,11 @@ class Obj_tracking(object):
         self.__track_algo = 'KCF'
         self.__tracker = cv2.Tracker_create(self.__track_algo)
     
+    """    
+    function:    def __detect_target    
+    input parameters: self,frame,draw    
+    Notes:     
+    """    
     def __detect_target(self,frame,draw):
         hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv_frame,self.__low_thresh,self.__high_thresh)
@@ -174,6 +204,11 @@ class Obj_tracking(object):
                 cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
         return (x,y,w,h)
     
+    """    
+    function:    def __generate_target    
+    input parameters: self,target_pos    
+    Notes:     
+    """    
     def __generate_target(self,target_pos):
         pos = vector(0,0,0)
         pos.x = (1-target_pos[2])*self.__total_l
@@ -183,6 +218,11 @@ class Obj_tracking(object):
         self.__target.visible = True
         return
     
+    """    
+    function:    def track    
+    input parameters: self,found,draw=False    
+    Notes:     
+    """    
     def track(self,found,draw=False):
         ret,frame = self.__cap.read()
         if not self.__marked:
@@ -204,10 +244,20 @@ class Obj_tracking(object):
         cv2.imshow('Out',frame)
         return self.__target
     
+    """    
+    function:    def reset    
+    input parameters: self    
+    Notes:     
+    """    
     def reset(self):
         self.__marked = False
         self.__tracker = cv2.Tracker_create(self.__track_algo)
     
+    """    
+    function:    def terminate    
+    input parameters: self    
+    Notes:     
+    """    
     def terminate(self):
         self.__cap.release()
         cv2.destroyAllWindows()
@@ -217,10 +267,20 @@ class Obj_tracking(object):
 Dataset creation
 """
 class Dataset(object):
+    """    
+    function:    def __init__    
+    input parameters: self    
+    Notes:     
+    """    
     def __init__(self):
         self.__dataset = pd.DataFrame(columns=['x','y','z','angle0','angle1','angle2','angle3'])
         return
     
+    """    
+    function:    def update_dataset    
+    input parameters: self,model,target_pos    
+    Notes:     
+    """    
     def update_dataset(self,model,target_pos):
         data_row = {'x':target_pos.x, 'y':target_pos.y,'z':target_pos.z}
         angles = model['angles']
@@ -229,11 +289,21 @@ class Dataset(object):
         self.__dataset = self.__dataset.append(data_row, ignore_index=True)
         return
     
+    """    
+    function:    def save_dataset    
+    input parameters: self,filename='dataset.csv'    
+    Notes:     
+    """    
     def save_dataset(self,filename='dataset.csv'):
         self.__dataset = self.__dataset.set_index(self.__dataset.columns[0])
         self.__dataset.to_csv(filename)
         return
     
+    """    
+    function:    def get_dataset    
+    input parameters: self    
+    Notes:     
+    """    
     def get_dataset(self):
         return self.__dataset
 
@@ -243,6 +313,11 @@ Setup vpython scene, camera position
 create axes and colors
 """
 
+"""
+function: create_scene
+input parameters: height=None
+Notes: 
+"""
 def create_scene(height=None):
     if height==None:
         scene.height = 600
@@ -307,6 +382,11 @@ length, limits, current position of arm segments
 current angles, claw/grabber state
 """
        
+"""
+function: init_model
+input parameters: lengths=None, limits=None
+Notes: 
+"""
 def init_model(lengths=None, limits=None):
     if lengths == None:
         lengths = [3,6,5,4]
@@ -374,6 +454,11 @@ create specific path
 Generates random target location using lengths of arm segment
 """
 class TargetGenerator(object):
+    """    
+    function:    def __init__    
+    input parameters: self,model,path='circle'    
+    Notes:     
+    """    
     def __init__(self,model,path='circle'):
         self.__total_l = sum(model['lengths'])
         self.__path = path
@@ -382,6 +467,11 @@ class TargetGenerator(object):
         self.__target.visible = False
         self.__curr_iter = 0
     
+    """    
+    function:    def __move_target    
+    input parameters: self    
+    Notes:     
+    """    
     def __move_target(self):
         r = 5
         cz, cy = 0, 5
@@ -393,6 +483,11 @@ class TargetGenerator(object):
         if self.__curr_iter > 360:
             self.__curr_iter = 0
         
+    """    
+    function:    def __random_target    
+    input parameters: self    
+    Notes:     
+    """    
     def __random_target(self):
         pos = vector(0,0,0)
         max_range = int(0.8*self.__total_l )
@@ -401,6 +496,11 @@ class TargetGenerator(object):
         pos.z = randint(-max_range,max_range)
         self.__target.pos = pos
         
+    """    
+    function:    def get_target    
+    input parameters: self    
+    Notes:     
+    """    
     def get_target(self):
         if self.__path == 'circle':
             self.__move_target()
@@ -409,6 +509,11 @@ class TargetGenerator(object):
         self.__target.visible = True
         return self.__target
         
+"""
+function: create_target_path
+input parameters: target=None
+Notes: 
+"""
 def create_target_path(target=None):
     pos = vector(0,0,0)
     
@@ -529,6 +634,11 @@ def generate_random_angles(model):
         
     return angles
 
+"""
+function: generate_dataset
+input parameters: size=None
+Notes: 
+"""
 def generate_dataset(size=None):
     if size==None:
         size = 5000
@@ -547,6 +657,11 @@ def generate_dataset(size=None):
 visualization
 """
 
+"""
+function: vis
+input parameters: cam_enable=False,com_enable=False
+Notes: 
+"""
 def vis(cam_enable=False,com_enable=False):
     create_scene(400)
     model = init_model()
@@ -592,12 +707,22 @@ def vis(cam_enable=False,com_enable=False):
 using nn model
 """
 
+"""
+function: transform
+input parameters: X
+Notes: 
+"""
 def transform(X):
     r = np.linalg.norm(X)
     theta = (np.pi/2) - np.arccos(X[1]/r)
     phi = np.arctan2(X[2],X[0])
     return np.array([r,theta,phi])
 
+"""
+function: nn_prediction
+input parameters: None
+Notes: 
+"""
 def nn_prediction():
     from keras.models import load_model
     
@@ -644,6 +769,11 @@ def analytic_sol(model,target_pos):
     model['angles'][1] = np.arctan2(z-l1,math.sqrt(x**2+y**2))-np.arctan2(l3*s3,l2+(l3*c3))
     return
 
+"""
+function: analytic_sol_sim
+input parameters: None
+Notes: 
+"""
 def analytic_sol_sim():
     
     error = []
@@ -660,8 +790,11 @@ def analytic_sol_sim():
     
     print(np.mean(error))
     return
+
 """
-main function
+function: main
+input parameters: None
+Notes: 
 """
 def main():
 #    train()

@@ -95,6 +95,11 @@ def create_drawers(y):
     
     return y_class
 
+"""
+function: load_data
+input parameters: None
+Notes: 
+"""
 def load_data():
     data = pd.read_csv('dataset.csv')
     out_cols = [col for col in data.columns if 'angle' in col]
@@ -146,6 +151,11 @@ def main():
 #    print(res.describe())
 #    print(np.degrees(np.mean(abs(y_pred-y_test),axis=0)))
 
+"""
+function: upack_drawers
+input parameters: y_class
+Notes: 
+"""
 def upack_drawers(y_class):
     y = []
     for i in range(4):
@@ -153,6 +163,11 @@ def upack_drawers(y_class):
         y.append(value[0]*10 - 90)
     return y
 
+"""
+function: testing
+input parameters: None
+Notes: 
+"""
 def testing():
     X_train, y_train, y_class_train, X_test, y_test, y_class_test = load_data()
 #    nn = load_model('model.hd5')
