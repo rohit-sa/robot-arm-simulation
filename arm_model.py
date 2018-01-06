@@ -706,6 +706,12 @@ def vis(cam_enable=False,com_enable=False):
 """
 using nn model
 """
+def normalize_lengths(X):
+    arm_param = {'x_span':(3,15),'y_span':(-6,18),'z_span':(-15,15)}
+    X[:,0] = (X[:,0]-arm_param['x_span'][0])/(arm_param['x_span'][1]-arm_param['x_span'][0])
+    X[:,1] = (X[:,1]-arm_param['x_span'][0])/(arm_param['x_span'][1]-arm_param['x_span'][0])
+    X[:,2] = (X[:,2]-arm_param['x_span'][0])/(arm_param['x_span'][1]-arm_param['x_span'][0])
+    return X
 
 """
 function: transform
@@ -741,8 +747,9 @@ def nn_prediction():
 #        o = 0
 #        X = np.append(X,-np.pi/10)
         X.shape = (1,3)
+        X = normalize_lengths(X)
         
-        angles = np.degrees(nn.predict(X))
+        angles = np.degrees(nn.predict(X)[0])
         
         model['angles'] = angles.tolist()[0]
         reach = update(model)
@@ -800,7 +807,7 @@ def main():
 #    train()
 #    vis()
 #    analytic_sol_sim()
-#    generate_dataset(10000)
+#    generate_dataset(20000)
     nn_prediction()
 
 if __name__ == '__main__':
