@@ -91,10 +91,11 @@ def proj_plane(X):
     x,y,z = X[:,0], X[:,1], X[:,2]
     xz = np.sqrt(x*x + z*z)
     return np.vstack((xz,y)).T
+
 """
-function " proj_plane "
-Notes: defines xz as a single plane reducing dimensionality to 2
-removing one output angle
+function: one_hot_encoder
+input parameters: X,N=10
+Notes: 
 """
 def one_hot_encoder(X,N=10):
     one_hot_X = np.zeros((X.shape[0],N))
@@ -102,10 +103,11 @@ def one_hot_encoder(X,N=10):
         index = int(X[i])
         one_hot_X[i,index] = 1
     return one_hot_X
+
 """
-function " proj_plane "
-Notes: defines xz as a single plane reducing dimensionality to 2
-removing one output angle
+function: create_drawers
+input parameters: y,N=10
+Notes: 
 """
 def create_drawers(y,N=10):
     y_class = []
@@ -132,15 +134,9 @@ def normalize_lengths(X):
     return X
 
 """
-<<<<<<< Updated upstream
 function: load_data
 input parameters: None
 Notes: 
-=======
-function " proj_plane "
-Notes: defines xz as a single plane reducing dimensionality to 2
-removing one output angle
->>>>>>> Stashed changes
 """
 def load_data():
     data = pd.read_csv('dataset.csv')
@@ -173,8 +169,6 @@ def load_data():
     
     return X_train, y_train, y_class_train, X_test, y_test, y_class_test, bin_params
 
-#def custom_loss(y_true,y_pred):
-    
 
 """
 function " main "
@@ -195,6 +189,11 @@ def main():
     print(res.describe())
     print(np.degrees(np.mean(abs(y_pred[0]-y_test),axis=0)))
 
+"""
+function: convert_to_label
+input parameters: y_pred
+Notes: 
+"""
 def convert_to_label(y_pred):
     y = []
     for i in range(4):
@@ -202,16 +201,12 @@ def convert_to_label(y_pred):
         y.append(value)
     return y
 
-<<<<<<< Updated upstream
 """
 function: upack_drawers
-input parameters: y_class
+input parameters: y_pred,bin_params
 Notes: 
 """
-def upack_drawers(y_class):
-=======
 def upack_drawers(y_pred,bin_params):
->>>>>>> Stashed changes
     y = []
     N = bin_params[-1]['total_drawers']-1
     for i in range(4):

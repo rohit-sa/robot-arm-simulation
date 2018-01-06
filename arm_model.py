@@ -523,8 +523,12 @@ def create_target_path(target=None):
         target.pos=pos
         
     return target
+
+
 """
-Simple gradient descent
+function: sim_gd_0
+input parameters: model, target_pos
+Notes: 
 """
 def sim_gd_0(model, target_pos):
     #hyperparameters
@@ -703,8 +707,11 @@ def vis(cam_enable=False,com_enable=False):
 #    cam_target.terminate()
     return
 
+
 """
-using nn model
+function: normalize_lengths
+input parameters: X
+Notes: 
 """
 def normalize_lengths(X):
     arm_param = {'x_span':(3,15),'y_span':(-6,18),'z_span':(-15,15)}
